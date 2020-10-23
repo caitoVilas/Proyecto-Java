@@ -1,0 +1,160 @@
+/* RESET CSS */
+:root {
+    --main-font: sans-serif;
+    --font-size: 16px;
+    --main-color: #fff;
+    --second-color: #222;
+    --main-modal-color: rgba(247,222,30,.85);
+    --second-modal-color: rgba(34,34,34,.85);
+    --container-width : 1200px;
+}
+html {
+    box-sizing: border-box;
+    font-family: var(--main-font);
+    font-size: var(--font-size);
+    scroll-behavior: smooth;
+}
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+body {
+    margin: 0;
+    overflow-x: hidden;
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    color: var(--main-color);
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+.img_nav{
+    background-color: #fff;
+    padding: 1px;
+    border: 1px solid fff;
+    border-radius: 100%;
+}
+.img-loggin{
+    width: 100%;
+    height: 470px;
+}
+.header-container img{
+    width: 100%;
+    height: 400px;
+}
+.titulo-principal{
+    text-align: center;
+    font-weight: bold;
+    background-image: linear-gradient(180deg, #00c6fb, #ffffff, #00c6fb );
+    -webkit-background-clip: text;
+    color: transparent;
+}
+.main-container{
+    background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+    color: var(--main-color);
+    margin-top: 1em;
+    text-align: center;
+}
+.subtitulo{
+    text-shadow: 5px 5px 6px var(--second-color);
+}
+section{
+    width: 100%;
+    max-width: var(--container-width);
+    min-height: 100vh;
+}
+section h2{
+    padding-top: 2.5em;
+    text-align: center;
+}
+.logeado{
+    background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+}
+.user_img{
+    border: #fff solid;
+    padding: .7em;
+    border-radius: 100%;
+}
+.container-footer img{
+    width: 9rem;
+    height: 9rem;
+    padding: 1em;
+    background-color: #fff;
+    border-radius: 100%;
+    margin-top: 1em;
+    margin-left:9em;
+}
+.icon-footer{
+    font-size: 3rem;
+    color: #fff;
+    margin-right: 2em;
+}
+.icon-footer:hover{
+    color: #005bea;
+}
+/* Panel de loggin */
+.panel{
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    /* overflow-y: auto; */
+    background-color: var(--second-modal-color);
+    /* efecto aparecer y desaparecer */
+    /* opacity: 0;
+    visibility: hidden; */
+    transition: 0.3s ease;
+    /* de arriba */
+    transform: translate(0,-100%);
+    /* de abajo */
+    transform: translate(0,100%);
+    /* de la izquierda */
+    transform: translate(100%,0%);
+    /* de la derecha */
+    transform: translate(-100%,0%);
+}
+.panel.is-active{
+    transform: translate(0,0);
+    /* para el efecto de apareer  desaparecer */
+    /* visibility: visible;
+    opacity: 1; */
+}
+/*    estilos formularios reistro y loggin */
+.frm_registro .frm_loggin{
+    --form-ok-color: #4caf50;
+    --form-error-color : #f44336
+}
+.frm_registro [required]:valid .img-loggin[required]:valid{
+    border: thin solid var(--form-ok-color);
+}
+.frm_registro [required]:invalid .img-loggin[required]:invalid{
+    border: thin solid var(--form-error-color);
+}
+.frm_registro-error .frm_loggin-error{
+    margin-top: -1rem;
+    font-size: 80%;
+    background-color: var(--form-error-color);
+    color: #fff;
+    transition: all 800ms ease;
+}
+.none{
+    display: none;
+}
+.frm_registro-error.is-active .frm_loggin-error.is-active{
+    display: block;
+    animation: show-message 1s 1 normal 0s ease-out both;
+}
+@keyframes show-message{
+    0%{
+        visibility: hidden;
+        opacity: 0;
+    }
+    100%{
+        visibility: visible;
+        opacity: 1;
+    }
+}
