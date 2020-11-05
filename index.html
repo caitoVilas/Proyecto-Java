@@ -84,11 +84,11 @@
                      Loggin</button>
                 
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle mr-2 b_u" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" hidden>
+                        <button class="btn btn-secondary dropdown-toggle mr-2 b_u" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn_user" hidden>
                             </button>
                         
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <button class="btn btn-outline-danger btn-block b_cs">Cerrar Sesion</button>
+                          <button class="btn btn-outline-danger btn-block b_cs" id="btn_cerrar">Cerrar Sesion</button>
                         </div>
                       </div>
                       <i class="far fa-user user_img" hidden></i>
@@ -131,29 +131,34 @@
                   <div class="row text-center">
                     <div class="col-md-12">
                         <div class="form-group fgr">
-                          <input type="text" id="r_name" name="name" placeholder="Ingrese su nombre" title="Debes ingresar tu nombre para el registro" required>
+                          <input type="text" id="r_name" name="name" placeholder="Ingrese su nombre" title="Debes ingresar tu nombre para el registro">
+                          <br><span id="s_name" class="none"></span>
                         </div>
                     </div>
                 </div>
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group fgr">
-                        <input type="email" id="r_mail" name="email" placeholder="Ingrese su email" pattern="^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$" title="La direccion de email no tiene formato correcto" required>
+                        <input type="email" id="r_mail" name="email" placeholder="Ingrese su email"  title="La direccion de email no tiene formato correcto">
+                        <br><span id="s_mail" class="none"></span>
                       </div>
                   </div>
                 </div>
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group fgr">
-                        <input type="text" id="r_uname" name="username" placeholder="nombre usuario" title="Necesitamos tu nombre de usuario para registrarte" required>
+                        <input type="text" id="r_uname" name="username" placeholder="nombre usuario" title="Necesitamos tu nombre de usuario para registrarte">
+                        <br><span id="s_unam" class="none"></span>
                       </div>
                   </div>
                 </div>
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group fgr">
-                        <input type="password" id="r_pass" name="password" placeholder="Ingrese su contraseña" title="Necesitamos tu contraseña para registrarte" required>
+                        <input type="password" id="r_pass" name="password" placeholder="Ingrese su contraseña" title="Necesitamos tu contraseña para registrarte">
+                        <br><span id="s_pass" class="none"></span>
                       </div>
+                      <br><span id="msje_nuevo" class="none"></span><br><br>
                   </div>
                 </div>
                 <div class="container text-center none" id="loader">
@@ -164,7 +169,7 @@
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group">
-                        <button class="btn btn-outline-success btn-block" type="submit">
+                        <button class="btn btn-outline-success btn-block" type="submit" id="ok_nuevo">
                           <i class="far fa-clipboard"></i> 
                            Registrar</button>
                       </div>
@@ -184,7 +189,7 @@
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group">
-                        <button class="btn btn-outline-danger btn-block btn_cancelar" type="button">
+                        <button class="btn btn-outline-danger btn-block btn_cancelar" type="button" id="cancel_nuevo">
                           <i class="fas fa-ban"></i> 
                            Cancelar</button>
                       </div>
@@ -200,15 +205,16 @@
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group">
-                        <input type="text" name="username" placeholder="nombre usuario" title="Debes ingresar nombre de usuario" required>
+                        <input type="text" name="username" placeholder="nombre usuario" title="Debes ingresar nombre de usuario" id="user">
                       </div>
                   </div>
                 </div>
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group">
-                        <input type="password" name="password" placeholder="Ingrese su contraseña" title="Debes ingresar tu contraseña" required>
+                        <input type="password" name="password" placeholder="Ingrese su contraseña" title="Debes ingresar tu contraseña" id="pass">
                       </div>
+                      <br><span id="mensaje" class="none"></span><br><br><br>
                   </div>
                 </div>
                 <div class="row text-center">
@@ -223,7 +229,7 @@
                 <div class="row text-center">
                   <div class="col-md-12">
                       <div class="form-group">
-                        <button class="btn btn-outline-danger btn-block btn_cancelar">
+                        <button class="btn btn-outline-danger btn-block btn_cancelar" id="cancel_login">
                           <i class="fas fa-ban"></i>
                            Cancelar</button>
                       </div>

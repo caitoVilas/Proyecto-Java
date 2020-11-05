@@ -6,6 +6,8 @@
 //*****************************************************************************************++ */
 const d = document,
      ls = localStorage;
+let usuario,
+    token;
 
      (function() {
         'use strict';
@@ -31,8 +33,8 @@ d.addEventListener('DOMContentLoaded', e => {
     verLoggin('#btn_loggin');
     ocultarLoggin('.btn_cancelar');
     logUser('#btn_ingresar');
-    cerrarSesion('.b_cs');
-    validacionRegistro();
+    cerrarSesion();
+    crearUsuario();
 
 });
 
@@ -73,107 +75,294 @@ function ocultarLoggin(btn) {
 // loguearse
 
 function logUser(btn){
+
+    const boton = d.getElementById('btn_ingresar'),
+          $btn_cancellog = d.getElementById('cancel_login'),
+             $formLoggin = d.getElementById('frm_loggin'),
+                  $panel = d.querySelector('.panel'),
+                $mensaje = d.getElementById('mensaje'),
+                   $bLog = d.getElementById('btn_loggin');
    
-    d.addEventListener('click', e => {
-    //e.preventDefault();
+    boton.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
     
-    const $formLoggin = d.getElementById('frm_loggin'),
-         $panel = d.querySelector('.panel'),
-          $bLog = d.getElementById('btn_loggin'),
-          $buse = d.querySelector('.b_u'),
-          $imge = d.querySelector('.user_img'),
-          $slog = d.querySelector('.sin_loggin'),
-          $section = d.querySelector('.logeado');
-         
+     const $buse = d.querySelector('.b_u'),
+           $imge = d.querySelector('.user_img'),
+           $slog = d.querySelector('.sin_loggin'),
+        $section = d.querySelector('.logeado'),
+            user = d.getElementById('user').value,
+            pass = d.getElementById('pass').value;
+
+    let request = {"nombreUsuario": user, "password": pass};
+
+
     
-        if(e.target.matches(btn)){
+        fetch("http://localhost:8080/auth/login",{
+            method: 'POST',
+            mode: 'cors',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(request)
+        })
+        .then(response => response.ok? response.json(): Promise.reject(response))
+        .then(data => {
+            console.log(data.nombreUsuario);
+            console.log(data.token);
+            data.authorities.forEach(auth => console.log(auth));
+            setInterval(() =>{
+                $mensaje.textContent = '';
+                $mensaje.classList.add('none');
+                $mensaje.classList.remove('ok');
+                $mensaje.classList.remove('error');
+
+                // cerramos login y entramos a la web
+
+                $panel.classList.remove('is-active');
+                $bLog.setAttribute('hidden','');
+                $buse.removeAttribute('hidden');
+                $buse.textContent = usuario;
+                $slog.setAttribute('hidden','');
+                $section.removeAttribute('hidden');
+                $imge.removeAttribute('hidden');
+
+            },3000);
+                $mensaje.textContent = `Bienvenido ${data.nombreUsuario}`;
+                $mensaje.classList.remove('none');
+                $mensaje.classList.remove('error');
+                $mensaje.classList.add('ok');
+                usuario = data.nombreUsuario;
+                token = data.token;    
+                
+           
+        })
+        .catch(error => {
+            setInterval(() =>{
+                $mensaje.textContent = '';
+                $mensaje.classList.add('none');
+                $mensaje.classList.remove('ok');
+                $mensaje.classList.remove('error');
+            },3000);
+                $mensaje.textContent = 'Usuario no Autorizado';
+                $mensaje.classList.remove('none');
+                $mensaje.classList.remove('ok');
+                $mensaje.classList.add('error');
+
             
-           if(ls.getItem($formLoggin.username.value) && $formLoggin.password.value === ls.getItem($formLoggin.username.value)){
-            alert(`Bienvenido ${$formLoggin.username.value} `);
-            $bLog.setAttribute('hidden','');
-            $buse.removeAttribute('hidden');
-            $buse.innerHTML = $formLoggin.username.value;
-            $imge.removeAttribute('hidden')
-            $panel.classList.remove('is-active');
-            $formLoggin.reset();
-            $slog.setAttribute('hidden','');
-            $section.removeAttribute('hidden');
-           }else {
-             alert('Usuario no registrado');
-           }
-   
-        }
+            console.log('Usuario no Autirizado')});
 
    });
+
+   $btn_cancellog.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    $mensaje.classList.add('none');
+    $formLoggin.reset();
+    $panel.classList.remove('is-active');
+    $bLog.removeAttribute('disabled');
+    
+});
+
+
+   
 }
 
-function cerrarSesion(btn){
+function cerrarSesion(){
     const  $bLog = d.querySelector('.b_l'),
            $buse = d.querySelector('.b_u'),
+           $cesion = d.getElementById('btn_cerrar'),
            $imge = d.querySelector('.user_img'),
            $slog = d.querySelector('.sin_loggin'),
           $section = d.querySelector('.logeado');
 
-    d.addEventListener('click', e => {
-        if(e.target.matches(btn)){
+    $cesion.addEventListener('click', e => {
+       
             $buse.setAttribute('hidden','');
             $imge.setAttribute('hidden','');
             $bLog.removeAttribute('hidden');
-            $bLog.removeAttribute('disabled');
+            $bLog.removeAttribute('hidden');
             $section.setAttribute('hidden','')
             $slog.removeAttribute('hidden');
+            usuario = '';
+            token = '';
+            location.reload();
             alert('Has Cerrado Session nos vemos pronto!')
-        }
+        
     });
 }
 
-function validacionRegistro(){
-    const $form = d.getElementById('frm_registro'),
-    $inputs = d.querySelectorAll('.fgr [required]');
+function crearUsuario() {
+    const $frm_registro = d.getElementById('frm_registro'),
+    $nombre = d.getElementById('r_name'),
+    $email  = d.getElementById('r_mail'),
+    $nombreUsuario  = d.getElementById('r_uname'),
+    $pass  = d.getElementById('r_pass'),
+    $btn_ok = d.getElementById('ok_nuevo'),
+    $btn_cancel = d.getElementById('cancel_nuevo');
+
+    // capturo los span para los mensajes
+    const $sName = d.getElementById('s_name'),
+    $sMail = d.getElementById('s_mail'),
+    $sUnam = d.getElementById('s_unam'),
+    $sPass = d.getElementById('s_pass'),
+    $msje = d.getElementById('msje_nuevo');
+
+
+    // Validaciones
+
+    let validNombre = false,
+    validUser  = false,
+    validMail  = false,
+    validPass   = false;
+
+    $btn_ok.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if($nombre.value === '') {
+
+        $sName.textContent = 'el Nombre no puede estar vacio';
+        $sName.classList.remove('none');
+        $sName.classList.remove('ok');
+        $sName.classList.add('error');
+        validNombre = false;
+    }else {
+        $sName.textContent = 'OK';
+        $sName.classList.remove('none');
+        $sName.classList.remove('error');
+        $sName.classList.add('ok');
+        validNombre = true;
     
-    $inputs.forEach(input => {
-        
-        const $span = d.createElement('span');
-        $span.id = input.name;
-        $span.textContent = input.title;
-        $span.classList.add('frm_registro-error','none')
-        input.insertAdjacentElement('afterend', $span);
+    }
+
+    if($email.value === ''){
+
+        $sMail.textContent = 'El email no puede estar vacio';
+        $sMail.classList.remove('none');
+        $sMail.classList.remove('ok');
+        $sMail.classList.add('error');
+        validMail = false;
+        } else {
+        const regex = /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/i
+        .test($email.value);
+        if(!regex){
+           $sMail.textContent = 'el email no es valido';
+           $sMail.classList.remove('none');
+           $sMail.classList.remove('ok');
+           $sMail.classList.add('error');
+           validMail = false;
+        }else{
+           $sMail.textContent = 'OK';
+           $sMail.classList.remove('none');
+           $sMail.classList.remove('error');
+           $sMail.classList.add('ok');
+           validMail = true;
+        }
+        }
+
+        if($nombreUsuario.value === '') {
+
+            $sUnam.textContent = 'el Nombre de usuario es Obligatorio';
+            $sUnam.classList.remove('none');
+            $sUnam.classList.remove('ok');
+            $sUnam.classList.add('error');
+            validUser = false;
+          }else {
+            $sUnam.textContent = 'OK';
+            $sUnam.classList.remove('none');
+            $sUnam.classList.remove('error');
+            $sUnam.classList.add('ok');
+            validUser = true;
+          }
+
+          if($pass.value === '') {
+
+            $sPass.textContent = 'la contraseña es Obligatoria';
+            $sPass.classList.remove('none');
+            $sPass.classList.remove('ok');
+            $sPass.classList.add('error');
+            validPass = false;
+            }else {
+            $sPass.textContent = 'OK';
+            $sPass.classList.remove('none');
+            $sPass.classList.remove('error');
+            $sPass.classList.add('ok');
+            validPass = true;
+            }  
+            
+        // cuando todo esta oK
+
+        if (validNombre && validUser && validMail && validPass) {
+            const req = {"nombre": $nombre.value,  "nombreUsuario": $nombreUsuario.value, "email": $email.value,
+             "password": $pass.value, "rol": ["ROL_USER"]};
+            console.log(JSON.stringify(req));
+
+            fetch("http://localhost:8080/auth/nuevo",{
+            method: 'POST',
+            mode: 'cors',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(req)
+            })
+            .then(response => response.ok? response.json(): Promise.reject(response))
+            .then(data => {
+                setInterval(() =>{
+                    $msje.textContent = '';
+                    $msje.classList.add('none');
+                    $msje.classList.remove('error');
+                    $msje.classList.remove('ok');
+
+                    // limpiamos el formulario
+                    $sName.classList.add('none');
+                    $sMail.classList.add('none');
+                    $sUnam.classList.add('none'); 
+                    $sPass.classList.add('none');
+                    $msje.classList.add('none');
+                    $frm_registro.reset();
+
+
+                },3000);
+                    $msje.textContent = 'El usuario ha sido guardado con exito!!';
+                    $msje.classList.remove('none');
+                    $msje.classList.remove('error');
+                    $msje.classList.add('ok');
+
+                
+
+
+            })
+            .catch(error => {
+                setInterval(() =>{
+                    $msje.textContent = '';
+                    $msje.classList.add('none');
+                    $msje.classList.remove('ok');
+                    $msje.classList.remove('error');
+                },4000);
+                    $msje.textContent = 'El nombre de usuario o el email ya existen';
+                    $msje.classList.remove('none');
+                    $msje.classList.remove('ok');
+                    $msje.classList.add('error');
+             });
+        }
+
+
     });
 
-    d.addEventListener('keyup', (e) => {
-
-        if(e.target.matches('.fgr [required]')){
-            let $input = e.target,
-               pattern = $input.pattern;
-               if(pattern){
-                  let regex = new RegExp(pattern);
-                  return !regex.exec($input.value)
-                  ?d.getElementById($input.name).classList.add('is-active')
-                  :d.getElementById($input.name).classList.remove('is-active')
-                }
-                if(!pattern){
-                    return $input.value === ''
-                    ?d.getElementById($input.name).classList.add('is-active')
-                    :d.getElementById($input.name).classList.remove('is-active')
-                }
-            }
+    $btn_cancel.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $sName.classList.add('none');
+        $sMail.classList.add('none');
+        $sUnam.classList.add('none'); 
+        $sPass.classList.add('none');
+        $frm_registro.reset();
+        const $panel = d.querySelector('.panel'),
+        $button = d.getElementById('btn_loggin');
+        $panel.classList.remove('is-active');
+        $button.removeAttribute('disabled');
     });
 
-    d.addEventListener('submit', e => {
-        const $loader = d.getElementById('loader');
-        $loader.classList.remove('none');
- 
-       const user = d.getElementById('r_uname').value;
-       const pass = d.getElementById('r_pass').value;
-       
-        
-        ls.setItem(user,pass);
-        setTimeout(()=> {
-            $loader.classList.add('none');
-        },3000);
-
-
-        
-        
-    });
+    
 }
+
+
